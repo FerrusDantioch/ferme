@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fff4d8">
+  <title>La Ferme du Soleil</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #fff5df;
+      --panel: #fffdf7;
+      --panel-2: #f8efdc;
+      --text: #403328;
+      --muted: #786853;
+      --line: #e9d7b6;
+      --green: #4e9955;
+      --green-soft: #dcefcf;
+      --accent: #e8764d;
+      --accent-dark: #bd5333;
+      --gold: #f2b83f;
+      --danger: #b44d45;
+      --shadow: 0 8px 24px rgba(91, 61, 30, .12);
+    }
+
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #121a17;
+      --panel: #1e2a24;
+      --panel-2: #27362e;
+      --text: #f7f0df;
+      --muted: #c0b6a3;
+      --line: #405047;
+      --green: #79bd72;
+      --green-soft: #2d4733;
+      --accent: #f08b64;
+      --accent-dark: #ffad8d;
+      --gold: #f4c657;
+      --danger: #ff9d91;
+      --shadow: 0 8px 24px rgba(0, 0, 0, .25);
+    }
+
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: ui-rounded, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.35;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button {
+      font: inherit;
+      color: inherit;
+      touch-action: manipulation;
+    }
+
+    button:focus-visible {
+      outline: 3px solid var(--gold);
+      outline-offset: 2px;
+    }
+
+    .app {
+      width: min(100%, 900px);
+      margin: 0 auto;
+      padding: 8px 12px calc(30px + env(safe-area-inset-bottom));
+    }
+
+    /* Bandeau de ferme */
+    .scene {
+      position: relative;
+      height: 154px;
+      overflow: hidden;
+      border-radius: 24px;
+      background: linear-gradient(#82d5f4 0%, #c9eff8 68%, #9dca68 69%, #77aa50 100%);
+      box-shadow: var(--shadow);
+      isolation: isolate;
+      transition: background .5s ease;
+    }
+
+    .scene::before,
+    .scene::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      border-radius: 50% 50% 0 0;
+    }
+
+    .scene::before {
+      width: 85%;
+      height: 65px;
+      left: -15%;
+      bottom: 17px;
+      background: #8abd5d;
+      transform: rotate(5deg);
+    }
+
+    .scene::after {
+      width: 90%;
+      height: 70px;
+      right: -20%;
+      bottom: 12px;
+      background: #6fa54c;
+      transform: rotate(-5deg);
+    }
+
+    .scene.night {
+      background: linear-gradient(#17264d 0%, #44577a 68%, #52734c 69%, #344e38 100%);
+    }
+
+    .scene.night::before { background: #466841; }
+    .scene.night::after { background: #365737; }
+
+    .scene span {
+      position: absolute;
+      display: block;
+      user-select: none;
+      filter: drop-shadow(0 3px 2px rgba(0, 0, 0, .14));
+    }
+
+    .celestial {
+      top: 12px;
+      right: 18px;
+      font-size: 2.6rem;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .cloud-a { top: 18px; left: 24%; font-size: 1.8rem; opacity: .8; }
+    .cloud-b { top: 42px; right: 29%; font-size: 1.25rem; opacity: .65; }
+    .night .cloud-a, .night .cloud-b { opacity: .25; }
+
+    .house { left: 4%; bottom: 26px; font-size: 3.8rem; }
+    .tree { left: 29%; bottom: 28px; font-size: 3.25rem; }
+    .tractor { left: 43%; bottom: 21px; font-size: 2.6rem; }
+    .cow { right: 28%; bottom: 20px; font-size: 2.25rem; }
+    .pig { right: 18%; bottom: 18px; font-size: 1.85rem; }
+    .sheep { right: 9%; bottom: 22px; font-size: 2rem; }
+    .sunflower { right: 2%; bottom: 16px; font-size: 2.6rem; }
+
+    @keyframes float {
+      50% { transform: translateY(-5px); }
+    }
+
+    /* En-tête et statistiques */
+    .header {
+      margin-top: 12px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      margin-bottom: 2px;
+      font-size: clamp(1.15rem, 5vw, 1.55rem);
+      line-height: 1.15;
+    }
+
+    .brand-row p {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+
+    .icon-button {
+      flex: 0 0 48px;
+      min-height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: var(--panel-2);
+      font-size: 1.35rem;
+      cursor: pointer;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: .9fr 1.45fr .9fr;
+      gap: 8px;
+      margin-top: 13px;
+    }
+
+    .stat {
+      min-width: 0;
+      padding: 9px 8px;
+      border-radius: 15px;
+      background: var(--panel-2);
+      text-align: center;
+    }
+
+    .stat-label {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--muted);
+      font-size: .7rem;
+    }
+
+    .stat strong {
+      display: block;
+      overflow: hidden;
+      font-size: 1rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .xp-text {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: .66rem;
+    }
+
+    .xp-track, .meter {
+      display: block;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(125, 108, 80, .2);
+    }
+
+    .xp-track {
+      height: 7px;
+      margin-top: 6px;
+    }
+
+    .xp-track i, .meter i {
+      display: block;
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--green), #91c956);
+      transition: width .25s linear;
+    }
+
+    /* Sections */
+    main {
+      display: grid;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .panel {
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .section-head h2 {
+      margin-bottom: 3px;
+      font-size: 1.12rem;
+    }
+
+    .section-head p {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: .78rem;
+    }
+
+    .badge {
+      flex: none;
+      max-width: 45%;
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: var(--text);
+      font-size: .72rem;
+      font-weight: 750;
+      text-align: center;
+    }
+
+    /* Graines et parcelles */
+    .seed-scroll {
+      display: flex;
+      gap: 8px;
+      margin: 0 -15px 14px;
+      padding: 2px 15px 8px;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: thin;
+    }
+
+    .seed {
+      flex: 0 0 94px;
+      min-height: 86px;
+      padding: 7px 5px;
+      border: 2px solid transparent;
+      border-radius: 16px;
+      background: var(--panel-2);
+      cursor: pointer;
+    }
+
+    .seed.selected {
+      border-color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .seed:disabled {
+      cursor: not-allowed;
+      filter: grayscale(.55);
+      opacity: .58;
+    }
+
+    .seed-emoji {
+      display: block;
+      font-size: 1.6rem;
+    }
+
+    .seed-name {
+      display: block;
+      font-size: .77rem;
+      font-weight: 800;
+    }
+
+    .seed-status {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: .65rem;
+    }
+
+    .plot-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .plot {
+      position: relative;
+      min-width: 0;
+      min-height: 76px;
+      aspect-ratio: 1 / 1;
+      padding: 7px 3px 13px;
+      overflow: hidden;
+      border: 2px solid rgba(91, 61, 30, .12);
+      border-radius: 17px;
+      color: #403328;
+      cursor: pointer;
+      transition: transform .15s ease, filter .15s ease;
+    }
+
+    .plot:active { transform: scale(.96); }
+    .plot.empty { background: #e8cc9d; }
+    .plot.growing { background: #cfe5a6; }
+    .plot.watered { background: #b9dfd2; }
+    .plot.ready {
+      border-color: #e4a62d;
+      background: #ffe398;
+      animation: readyPulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes readyPulse {
+      50% { filter: brightness(1.08); transform: translateY(-2px); }
+    }
+
+    .plot-emoji {
+      display: block;
+      font-size: clamp(1.4rem, 7vw, 2rem);
+      line-height: 1.05;
+    }
+
+    .plot-label {
+      display: block;
+      overflow: hidden;
+      font-size: .7rem;
+      font-weight: 850;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .plot-sub {
+      display: block;
+      margin-top: 2px;
+      overflow: hidden;
+      font-size: .58rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .plot .meter {
+      position: absolute;
+      right: 7px;
+      bottom: 6px;
+      left: 7px;
+      height: 5px;
+      background: rgba(66, 51, 34, .18);
+    }
+
+    /* Animaux */
+    .animal-list, .quest-list, .order-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .animal-card, .quest-card, .order-card {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--panel-2);
+    }
+
+    .animal-card.locked { opacity: .78; }
+
+    .animal-head {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .animal-icon { font-size: 2rem; }
+    .animal-name { min-width: 0; flex: 1; }
+    .animal-name h3 { margin-bottom: 1px; font-size: 1rem; }
+    .animal-name p { margin-bottom: 0; color: var(--muted); font-size: .7rem; }
+
+    .count-pill {
+      flex: none;
+      padding: 4px 7px;
+      border-radius: 999px;
+      background: var(--panel);
+      font-size: .72rem;
+      font-weight: 800;
+    }
+
+    .animal-product {
+      margin: 9px 0 7px;
+      font-size: .8rem;
+      font-weight: 700;
+    }
+
+    .animal-card .meter, .quest-card .meter {
+      height: 9px;
+    }
+
+    .animal-meta, .quest-progress-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: .72rem;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .btn {
+      min-height: 46px;
+      padding: 9px 11px;
+      border: 0;
+      border-radius: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .btn.primary {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .btn.secondary {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--text);
+    }
+
+    .btn.accent {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn:disabled {
+      cursor: not-allowed;
+      filter: grayscale(.45);
+      opacity: .48;
+    }
+
+    /* Quêtes */
+    .quest-card.complete { border-color: var(--green); }
+
+    .quest-title {
+      margin-bottom: 7px;
+      font-size: .88rem;
+      font-weight: 800;
+    }
+
+    .quest-reward {
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: .75rem;
+    }
+
+    .quest-card .btn {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    /* Stock */
+    .stock-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .stock-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 7px 9px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel-2);
+      font-size: .76rem;
+    }
+
+    .stock-chip strong { color: var(--green); }
+    .empty-message { margin-bottom: 0; color: var(--muted); font-size: .82rem; }
+
+    /* Commandes */
+    .order-card.ready { border-color: var(--green); }
+
+    .order-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .order-head h3 { margin-bottom: 0; font-size: .95rem; }
+
+    .order-pay {
+      color: var(--muted);
+      font-size: .7rem;
+      font-weight: 750;
+      text-align: right;
+    }
+
+    .order-items {
+      display: grid;
+      gap: 5px;
+    }
+
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 7px 9px;
+      border-radius: 11px;
+      background: var(--panel);
+      font-size: .8rem;
+    }
+
+    .order-stock { flex: none; font-weight: 850; color: var(--green); }
+    .order-item.missing .order-stock { color: var(--danger); }
+
+    footer {
+      padding: 20px 8px 0;
+      color: var(--muted);
+      font-size: .72rem;
+      text-align: center;
+    }
+
+    /* Messages */
+    .toasts {
+      position: fixed;
+      z-index: 100;
+      right: 12px;
+      bottom: calc(14px + env(safe-area-inset-bottom));
+      left: 12px;
+      display: grid;
+      justify-items: center;
+      gap: 7px;
+      pointer-events: none;
+    }
+
+    .toast {
+      max-width: min(92vw, 430px);
+      padding: 11px 15px;
+      border-radius: 14px;
+      background: rgba(42, 38, 31, .94);
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, .25);
+      font-size: .82rem;
+      font-weight: 750;
+      animation: toastIn .2s ease-out;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(8px); }
+    }
+
+    @media (min-width: 620px) {
+      .scene { height: 180px; }
+      .house { font-size: 4.7rem; }
+      .tree { font-size: 4rem; }
+      .tractor { font-size: 3.2rem; }
+      .cow { font-size: 2.8rem; }
+      .pig, .sheep { font-size: 2.35rem; }
+      .plot-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+      .animal-list { grid-template-columns: 1fr 1fr; }
+      .quest-list, .order-list { grid-template-columns: repeat(3, 1fr); }
+      .order-card .actions { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 370px) {
+      .app { padding-right: 8px; padding-left: 8px; }
+      .panel, .header { padding: 12px; }
+      .seed-scroll { margin-right: -12px; margin-left: -12px; padding-right: 12px; padding-left: 12px; }
+      .stats { gap: 5px; }
+      .stat { padding-right: 4px; padding-left: 4px; }
+      .stat strong { font-size: .88rem; }
+      .plot-grid { gap: 6px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="scene" id="scene" role="img" aria-label="La ferme en journée">
+      <span class="celestial" id="celestial" aria-hidden="true">☀️</span>
+      <span class="cloud-a" aria-hidden="true">☁️</span>
+      <span class="cloud-b" aria-hidden="true">☁️</span>
+      <span class="house" aria-hidden="true">🏡</span>
+      <span class="tree" aria-hidden="true">🌳</span>
+      <span class="tractor" aria-hidden="true">🚜</span>
+      <span class="cow" aria-hidden="true">🐄</span>
+      <span class="pig" aria-hidden="true">🐖</span>
+      <span class="sheep" aria-hidden="true">🐑</span>
+      <span class="sunflower" aria-hidden="true">🌻</span>
+    </div>
+
+    <header class="header">
+      <div class="brand-row">
+        <div>
+          <h1>🌻 La Ferme du Soleil</h1>
+          <p>Une petite ferme pleine de douceur</p>
+        </div>
+        <button class="icon-button" id="themeBtn" type="button" aria-label="Passer en mode sombre">🌙</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-label">Pièces</span>
+          <strong>🪙 <span id="coins">0</span></strong>
+        </div>
+        <div class="stat">
+          <span class="stat-label" id="levelText">Niveau 1</span>
+          <div class="xp-track" id="xpTrack" role="progressbar" aria-label="Expérience" aria-valuemin="0" aria-valuemax="50" aria-valuenow="0">
+            <i id="xpFill"></i>
+          </div>
+          <span class="xp-text" id="xpText">0 / 50 XP</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Série</span>
+          <strong>🔥 <span id="streakText">0</span></strong>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <h2>🌱 Les champs</h2>
+            <p>Plantez, arrosez une fois, puis récoltez.</p>
+          </div>
+          <span class="badge" id="selectedSeed">🥕 Carotte</span>
+        </div>
+        <div class="seed-scroll" id="seedBar" aria-label="Graines disponibles"></div>
+        <div class="plot-grid" id="plotGrid" aria-label="20 parcelles"></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <h2>🐾 Les animaux</h2>
+            <p>Chaque animal accélère la production. Réserve : 3 produits par animal.</p>
+          </div>
+        </div>
+        <div class="animal-list" id="animalList"></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <h2>📜 Quêtes du jour</h2>
+            <p id="dailyInfo">Nouvelles quêtes à minuit.</p>
+          </div>
+          <span class="badge">🎁 15 XP / quête</span>
+        </div>
+        <div class="quest-list" id="questList"></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <h2>🧺 La grange</h2>
+            <p>Les produits en stock servent à remplir les commandes.</p>
+          </div>
+        </div>
+        <div class="stock-list" id="stockList"></div>
+        <p class="empty-message" id="stockEmpty">Le stock est vide. Aux champs !</p>
+      </section>
+
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <h2>🚚 Commandes des clients</h2>
+            <p>Livraison payée 2,2 × la valeur des produits, avec bonus d’XP.</p>
+          </div>
+        </div>
+        <div class="order-list" id="orderList"></div>
+      </section>
+    </main>
+
+    <footer>
+      🌙 Les cultures et les animaux progressent pendant votre absence.<br>
+      Sauvegarde automatique sur cet appareil.
+    </footer>
+  </div>
+
+  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const SAVE_KEY = "ferme-du-soleil-save";
+      const OLD_SAVE_KEY = "ferme-du-soleil-v1";
+      const SAVE_VERSION = 2;
+      const PLOT_COUNT = 20;
+
+      const CROPS = [
+        { id: "carotte", name: "Carotte", emoji: "🥕", cost: 5, time: 15, sell: 12, level: 1 },
+        { id: "ble", name: "Blé", emoji: "🌾", cost: 8, time: 25, sell: 20, level: 1 },
+        { id: "tomate", name: "Tomate", emoji: "🍅", cost: 12, time: 40, sell: 32, level: 2 },
+        { id: "cerise", name: "Cerise", emoji: "🍒", cost: 15, time: 45, sell: 40, level: 2 },
+        { id: "fraise", name: "Fraise", emoji: "🍓", cost: 20, time: 60, sell: 55, level: 3 },
+        { id: "pomme", name: "Pomme", emoji: "🍎", cost: 25, time: 70, sell: 70, level: 3 },
+        { id: "citrouille", name: "Citrouille", emoji: "🎃", cost: 40, time: 120, sell: 120, level: 4 },
+        { id: "raisin", name: "Raisin", emoji: "🍇", cost: 30, time: 80, sell: 85, level: 4 },
+        { id: "poire", name: "Poire", emoji: "🍐", cost: 35, time: 90, sell: 100, level: 5 },
+        { id: "peche", name: "Pêche", emoji: "🍑", cost: 45, time: 100, sell: 125, level: 5 },
+        { id: "pasteque", name: "Pastèque", emoji: "🍉", cost: 60, time: 150, sell: 180, level: 6 }
+      ];
+
+      const ANIMALS = [
+        {
+          id: "poule", name: "Poule", plural: "Poules", emoji: "🐔",
+          product: "oeuf", productName: "Œuf", productEmoji: "🥚",
+          time: 45, value: 6, buy: 25, level: 1
+        },
+        {
+          id: "cochon", name: "Cochon", plural: "Cochons", emoji: "🐖",
+          product: "truffe", productName: "Truffe", productEmoji: "🍄",
+          time: 60, value: 16, buy: 100, level: 2
+        },
+        {
+          id: "mouton", name: "Mouton", plural: "Moutons", emoji: "🐑",
+          product: "laine", productName: "Laine", productEmoji: "🧶",
+          time: 75, value: 14, buy: 80, level: 2
+        },
+        {
+          id: "vache", name: "Vache", plural: "Vaches", emoji: "🐄",
+          product: "lait", productName: "Lait", productEmoji: "🥛",
+          time: 100, value: 22, buy: 150, level: 3
+        }
+      ];
+
+      const CLIENTS = [
+        { name: "Mamie Rose", emoji: "👵" },
+        { name: "Chef Marco", emoji: "👨‍🍳" },
+        { name: "Paul le voisin", emoji: "🧑‍🌾" },
+        { name: "Léa", emoji: "👧" },
+        { name: "Tom", emoji: "🧑" },
+        { name: "Papi Jean", emoji: "👴" }
+      ];
+
+      const CROP_BY_ID = Object.fromEntries(CROPS.map(crop => [crop.id, crop]));
+      const ANIMAL_BY_ID = Object.fromEntries(ANIMALS.map(animal => [animal.id, animal]));
+      const ITEMS = {};
+
+      CROPS.forEach(crop => {
+        ITEMS[crop.id] = { name: crop.name, emoji: crop.emoji, value: crop.sell };
+      });
+
+      ANIMALS.forEach(animal => {
+        ITEMS[animal.product] = {
+          name: animal.productName,
+          emoji: animal.productEmoji,
+          value: animal.value
+        };
+      });
+
+      const QUEST_TYPES = ["plant", "harvest", "water", "collect", "earn"];
+      const $ = id => document.getElementById(id);
+      const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+      function number(value, fallback = 0) {
+        const parsed = Number(value);
+        return Number.isFinite(parsed) ? parsed : fallback;
+      }
+
+      function integer(value, fallback = 0) {
+        return Math.floor(number(value, fallback));
+      }
+
+      function formatNumber(value) {
+        return Math.floor(value).toLocaleString("fr-FR");
+      }
+
+      function makeElement(tag, className = "", text) {
+        const element = document.createElement(tag);
+        if (className) element.className = className;
+        if (text !== undefined) element.textContent = text;
+        return element;
+      }
+
+      function makeMeter() {
+        const track = makeElement("span", "meter");
+        const fill = makeElement("i");
+        track.appendChild(fill);
+        return { track, fill };
+      }
+
+      function setMeter(meter, value, max) {
+        const percent = max > 0 ? clamp(value / max * 100, 0, 100) : 0;
+        meter.fill.style.width = percent + "%";
+        if (meter.track.getAttribute("role") === "progressbar") {
+          meter.track.setAttribute("aria-valuenow", String(Math.round(percent)));
+        }
+      }
+
+      function dateKey(date = new Date()) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
+
+      function yesterdayKey() {
+        const date = new Date();
+        date.setDate(date.getDate() - 1);
+        return dateKey(date);
+      }
+
+      function hashString(text) {
+        let hash = 2166136261;
+        for (let i = 0; i < text.length; i++) {
+          hash ^= text.charCodeAt(i);
+          hash = Math.imul(hash, 16777619);
+        }
+        return hash >>> 0;
+      }
+
+      function mulberry32(seed) {
+        return function () {
+          let value = seed += 0x6D2B79F5;
+          value = Math.imul(value ^ (value >>> 15), value | 1);
+          value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+          return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+
+      let state;
+      let storageReadProblem = false;
+      let saveWarningShown = false;
+      let lastSave = 0;
+      let lastSceneMode = "";
+
+      const ui = {
+        coins: $("coins"),
+        levelText: $("levelText"),
+        xpText: $("xpText"),
+        xpTrack: $("xpTrack"),
+        xpFill: $("xpFill"),
+        streakText: $("streakText"),
+        selectedSeed: $("selectedSeed"),
+        dailyInfo: $("dailyInfo"),
+        stockEmpty: $("stockEmpty"),
+        plots: [],
+        seeds: {},
+        animals: {},
+        quests: [],
+        orders: [],
+        stock: {}
+      };
+
+      function freshState() {
+        const now = Date.now();
+        const prefersDark = typeof matchMedia === "function" &&
+          matchMedia("(prefers-color-scheme: dark)").matches;
+
+        const fresh = {
+          coins: 60,
+          level: 1,
+          xp: 0,
+          streak: 0,
+          lastDaily: null,
+          selected: "carotte",
+          theme: prefersDark ? "dark" : "light",
+          plots: Array(PLOT_COUNT).fill(null),
+          animals: {},
+          inventory: {},
+          quests: [],
+          questDay: "",
+          questSerial: 0,
+          orders: [],
+          savedAt: now
+        };
+
+        ANIMALS.forEach(animal => {
+          fresh.animals[animal.id] = {
+            count: animal.id === "poule" ? 1 : 0,
+            stored: 0,
+            progress: 0,
+            last: now
+          };
+        });
+
+        return fresh;
+      }
+
+      /*
+       * Chargement tolérant : les anciens noms de propriétés sont acceptés,
+       * les valeurs manquantes sont remplacées et les montants sont validés.
+       */
+      function loadState() {
+        const base = freshState();
+        let raw = null;
+
+        try {
+          const text = localStorage.getItem(SAVE_KEY) || localStorage.getItem(OLD_SAVE_KEY);
+          if (text) raw = JSON.parse(text);
+        } catch (error) {
+          storageReadProblem = true;
+        }
+
+        if (!raw || typeof raw !== "object" || Array.isArray(raw)) return base;
+
+        const loaded = freshState();
+        const now = Date.now();
+        const oldVersion = integer(raw.version, 0);
+
+        loaded.coins = clamp(integer(raw.coins ?? raw.money, loaded.coins), 0, 1000000000);
+        loaded.level = clamp(integer(raw.level, 1), 1, 999);
+        loaded.xp = clamp(integer(raw.xp, 0), 0, 10000000);
+        loaded.streak = clamp(integer(raw.streak, 0), 0, 100000);
+        loaded.lastDaily = typeof raw.lastDaily === "string" ? raw.lastDaily : null;
+        loaded.questDay = typeof (raw.questDay ?? raw.dailyDate) === "string"
+          ? (raw.questDay ?? raw.dailyDate)
+          : "";
+        loaded.questSerial = clamp(integer(raw.questSerial, 0), 0, 1000000000);
+        loaded.savedAt = number(raw.savedAt, now);
+
+        if (raw.theme === "dark" || raw.theme === "light") loaded.theme = raw.theme;
+
+        const selected = raw.selected ?? raw.selectedSeed;
+        if (CROP_BY_ID[selected]) loaded.selected = selected;
+
+        while (loaded.xp >= loaded.level * 50) {
+          loaded.xp -= loaded.level * 50;
+          loaded.level++;
+        }
+
+        const oldInventory = raw.inventory ?? raw.stock ?? {};
+        if (oldInventory && typeof oldInventory === "object") {
+          Object.keys(ITEMS).forEach(id => {
+            const quantity = clamp(integer(oldInventory[id], 0), 0, 1000000);
+            if (quantity > 0) loaded.inventory[id] = quantity;
+          });
+        }
+
+        const oldPlots = raw.plots ?? raw.parcelles ?? raw.fields;
+        if (Array.isArray(oldPlots)) {
+          for (let i = 0; i < PLOT_COUNT; i++) {
+            const oldPlot = oldPlots[i];
+            if (!oldPlot || typeof oldPlot !== "object") continue;
+
+            const cropId = oldPlot.crop ?? oldPlot.cropId ?? oldPlot.type;
+            const crop = CROP_BY_ID[cropId];
+            if (!crop) continue;
+
+            let plantedAt = number(
+              oldPlot.plantedAt ?? oldPlot.startedAt ?? oldPlot.start,
+              now
+            );
+
+            if (oldVersion < 2 && plantedAt > 0 && plantedAt < 100000000000) {
+              plantedAt *= 1000;
+            }
+            if (plantedAt <= 0) plantedAt = now;
+
+            const watered = Boolean(oldPlot.watered);
+            let readyAt = number(oldPlot.readyAt ?? oldPlot.endAt ?? oldPlot.endsAt, NaN);
+
+            if (oldVersion < 2 && Number.isFinite(readyAt) && readyAt > 0 && readyAt < 100000000000) {
+              readyAt *= 1000;
+            }
+
+            if (!Number.isFinite(readyAt)) {
+              const oldRemaining = number(oldPlot.remaining, NaN);
+              readyAt = Number.isFinite(oldRemaining)
+                ? now + Math.max(0, oldRemaining) * 1000
+                : plantedAt + crop.time * 1000 * (watered ? 0.7 : 1);
+            }
+
+            loaded.plots[i] = {
+              crop: crop.id,
+              plantedAt,
+              readyAt: readyAt > 0 ? readyAt : now,
+              watered
+            };
+          }
+        }
+
+        if (raw.animals && typeof raw.animals === "object") {
+          ANIMALS.forEach(animal => {
+            const oldAnimal = raw.animals[animal.id];
+            if (oldAnimal === undefined || oldAnimal === null) return;
+
+            const oldObject = typeof oldAnimal === "object" ? oldAnimal : {};
+            const defaultCount = animal.id === "poule" ? 1 : 0;
+            const oldCount = typeof oldAnimal === "number"
+              ? oldAnimal
+              : (oldObject.count ?? oldObject.quantity ?? defaultCount);
+
+            const count = clamp(integer(oldCount, defaultCount), 0, 3);
+            const capacity = count * 3;
+            const duration = animal.time * 1000;
+
+            let progress = number(oldObject.progressMs ?? oldObject.progress, 0);
+            if (oldVersion < 2 && oldObject.progressMs === undefined && progress > 0 && progress <= 1) {
+              progress *= duration;
+            }
+
+            let last = number(oldObject.last ?? oldObject.updatedAt ?? raw.savedAt, now);
+            if (oldVersion < 2 && last > 0 && last < 100000000000) last *= 1000;
+            if (last <= 0) last = now;
+
+            loaded.animals[animal.id] = {
+              count,
+              stored: clamp(integer(oldObject.stored ?? oldObject.pending ?? oldObject.stock, 0), 0, capacity),
+              progress: clamp(progress, 0, Math.max(0, duration - 1)),
+              last
+            };
+          });
+        }
+
+        if (Array.isArray(raw.quests)) {
+          loaded.quests = raw.quests.slice(0, 3).map((quest, index) => {
+            const oldQuest = quest && typeof quest === "object" ? quest : {};
+            const target = clamp(integer(oldQuest.target ?? oldQuest.amount, 1), 1, 100000);
+            return {
+              id: String(oldQuest.id ?? `old-${index}`),
+              type: oldQuest.type ?? oldQuest.kind,
+              crop: oldQuest.crop ?? oldQuest.cropId,
+              target,
+              progress: clamp(integer(oldQuest.progress, 0), 0, target),
+              reward: clamp(integer(oldQuest.reward, 30), 1, 100000)
+            };
+          });
+        }
+
+        loaded.orders = Array.isArray(raw.orders) ? raw.orders.slice(0, 3) : [];
+        return loaded;
+      }
+
+      function saveGame() {
+        try {
+          state.savedAt = Date.now();
+          localStorage.setItem(SAVE_KEY, JSON.stringify({
+            ...state,
+            version: SAVE_VERSION
+          }));
+        } catch (error) {
+          if (!saveWarningShown) {
+            saveWarningShown = true;
+            toast("Sauvegarde locale indisponible.");
+          }
+        }
+      }
+
+      function toast(message) {
+        const root = $("toasts");
+        const element = makeElement("div", "toast", message);
+        root.appendChild(element);
+
+        while (root.children.length > 3) {
+          root.firstElementChild.remove();
+        }
+
+        setTimeout(() => element.remove(), 2800);
+      }
+
+      /* Quêtes quotidiennes */
+      function createQuest(random, excludedTypes = []) {
+        const availableTypes = QUEST_TYPES.filter(type => !excludedTypes.includes(type));
+        const type = availableTypes[Math.floor(random() * availableTypes.length)];
+        const quest = {
+          id: `${type}-${Math.floor(random() * 1000000000)}`,
+          type,
+          target: 1,
+          progress: 0,
+          reward: 30
+        };
+
+        if (type === "plant") {
+          quest.target = 4 + Math.floor(random() * 5);
+        } else if (type === "water") {
+          quest.target = 3 + Math.floor(random() * 5);
+        } else if (type === "collect") {
+          quest.target = 2 + Math.floor(random() * 4);
+        } else if (type === "earn") {
+          quest.target = 40 + Math.floor(random() * 9) * 10;
+        } else if (type === "harvest") {
+          const unlocked = CROPS.filter(crop => crop.level <= state.level);
+          const crop = unlocked[Math.floor(random() * unlocked.length)] || CROPS[0];
+          quest.crop = crop.id;
+          quest.target = 2 + Math.floor(random() * 4);
+        }
+
+        return quest;
+      }
+
+      function rollDailyQuests() {
+        const random = mulberry32(hashString(state.questDay));
+        const quests = [];
+        const usedTypes = [];
+
+        for (let i = 0; i < 3; i++) {
+          const quest = createQuest(random, usedTypes);
+          quests.push(quest);
+          usedTypes.push(quest.type);
+        }
+
+        state.quests = quests;
+      }
+
+      function questsAreValid() {
+        if (!Array.isArray(state.quests) || state.quests.length !== 3) return false;
+        const types = new Set();
+
+        for (const quest of state.quests) {
+          if (!quest || !QUEST_TYPES.includes(quest.type)) return false;
+          if (!Number.isFinite(quest.target) || quest.target < 1) return false;
+          if (!Number.isFinite(quest.progress)) return false;
+          if (types.has(quest.type)) return false;
+          types.add(quest.type);
+
+          if (quest.type === "harvest") {
+            const crop = CROP_BY_ID[quest.crop];
+            if (!crop || crop.level > state.level) return false;
+          }
+        }
+
+        return true;
+      }
+
+      function replaceQuest(index) {
+        const excluded = state.quests.map(quest => quest.type);
+        state.questSerial++;
+        const random = mulberry32(hashString(`${state.questDay}|${state.questSerial}`));
+        state.quests[index] = createQuest(random, excluded);
+      }
+
+      function questText(quest) {
+        if (quest.type === "plant") return `🌱 Planter ${quest.target} graines`;
+        if (quest.type === "water") return `💧 Arroser ${quest.target} fois`;
+        if (quest.type === "collect") return `🧺 Ramasser ${quest.target} produits d’animaux`;
+        if (quest.type === "earn") return `🪙 Gagner ${quest.target} pièces`;
+
+        const crop = CROP_BY_ID[quest.crop] || CROPS[0];
+        return `${crop.emoji} Récolter ${quest.target} × ${crop.name}`;
+      }
+
+      function progressQuests(type, amount = 1, itemId = null) {
+        if (!Array.isArray(state.quests)) return;
+
+        state.quests.forEach(quest => {
+          if (quest.type !== type) return;
+          if (type === "harvest" && quest.crop !== itemId) return;
+          quest.progress = Math.min(quest.target, quest.progress + amount);
+        });
+      }
+
+      function gainCoins(amount) {
+        const gained = Math.max(0, Math.round(amount));
+        state.coins += gained;
+        if (gained > 0) progressQuests("earn", gained);
+      }
+
+      function gainXP(amount) {
+        state.xp += Math.max(0, Math.round(amount));
+
+        while (state.xp >= state.level * 50) {
+          state.xp -= state.level * 50;
+          state.level++;
+          toast(`🎉 Niveau ${state.level} atteint !`);
+        }
+      }
+
+      function checkDaily() {
+        const today = dateKey();
+        let changed = false;
+
+        if (state.questDay !== today) {
+          state.questDay = today;
+          state.questSerial = 0;
+          rollDailyQuests();
+          changed = true;
+        } else if (!questsAreValid()) {
+          rollDailyQuests();
+          changed = true;
+        }
+
+        if (state.lastDaily !== today) {
+          state.streak = state.lastDaily === yesterdayKey() ? state.streak + 1 : 1;
+          state.lastDaily = today;
+
+          const cappedDay = Math.min(state.streak, 7);
+          const bonus = 20 + cappedDay * 5;
+          gainCoins(bonus);
+          toast(`🎁 Bonus jour ${cappedDay} : +${bonus} 🪙`);
+          changed = true;
+        }
+
+        return changed;
+      }
+
+      function claimQuest(index) {
+        const quest = state.quests[index];
+        if (!quest) return;
+
+        if (quest.progress < quest.target) {
+          toast("La quête n’est pas terminée.");
+          return;
+        }
+
+        const reward = quest.reward;
+        gainCoins(reward);
+        gainXP(15);
+        replaceQuest(index);
+
+        toast(`Quête : +${reward} 🪙 · +15 XP`);
+        updateUI();
+        saveGame();
+      }
+
+      /* Production des animaux, y compris hors ligne */
+      function updateAnimals(now = Date.now()) {
+        ANIMALS.forEach(animal => {
+          const animalState = state.animals[animal.id];
+          if (!animalState) return;
+
+          if (animalState.count <= 0) {
+            animalState.last = now;
+            animalState.progress = 0;
+            animalState.stored = 0;
+            return;
+          }
+
+          const elapsed = Math.max(0, now - number(animalState.last, now));
+          animalState.last = now;
+          if (elapsed <= 0) return;
+
+          const capacity = animalState.count * 3;
+          const duration = animal.time * 1000;
+
+          if (animalState.stored >= capacity) {
+            animalState.progress = 0;
+            return;
+          }
+
+          // Le progrès est exprimé en millisecondes de production de base.
+          // Avec 2 ou 3 animaux, il avance donc 2 ou 3 fois plus vite.
+          animalState.progress += elapsed * animalState.count;
+
+          while (animalState.progress >= duration && animalState.stored < capacity) {
+            animalState.progress -= duration;
+            animalState.stored++;
+          }
+
+          if (animalState.stored >= capacity) {
+            animalState.progress = 0;
+          }
+        });
+      }
+
+      function buyAnimal(id) {
+        const animal = ANIMAL_BY_ID[id];
+        const animalState = state.animals[id];
+        if (!animal || !animalState) return;
+
+        if (state.level < animal.level) {
+          toast(`Niveau ${animal.level} requis.`);
+          return;
+        }
+
+        if (animalState.count >= 3) {
+          toast("Maximum de 3 animaux.");
+          return;
+        }
+
+        if (state.coins < animal.buy) {
+          toast(`Il manque ${animal.buy - state.coins} 🪙.`);
+          return;
+        }
+
+        const now = Date.now();
+        updateAnimals(now);
+        state.coins -= animal.buy;
+        animalState.count++;
+
+        if (animalState.count === 1) {
+          animalState.progress = 0;
+          animalState.stored = 0;
+          animalState.last = now;
+        }
+
+        toast(`${animal.emoji} Un nouvel ami à la ferme !`);
+        updateUI(now);
+        saveGame();
+      }
+
+      function collectAnimal(id) {
+        const animal = ANIMAL_BY_ID[id];
+        const animalState = state.animals[id];
+        if (!animal || !animalState) return;
+
+        const now = Date.now();
+        updateAnimals(now);
+
+        const quantity = animalState.stored;
+        if (quantity <= 0) {
+          toast("Pas encore de produit à ramasser.");
+          return;
+        }
+
+        animalState.stored = 0;
+        state.inventory[animal.product] = (state.inventory[animal.product] || 0) + quantity;
+        progressQuests("collect", quantity);
+
+        toast(`${animal.productEmoji} +${quantity} ${animal.productName}${quantity > 1 ? "s" : ""} en stock`);
+        updateUI(now);
+        saveGame();
+      }
+
+      /* Champs */
+      function cropXP(crop) {
+        return Math.max(2, Math.ceil(crop.sell / 5));
+      }
+
+      function selectSeed(id) {
+        const crop = CROP_BY_ID[id];
+        if (!crop) return;
+
+        if (crop.level > state.level) {
+          toast(`Niveau ${crop.level} requis.`);
+          return;
+        }
+
+        state.selected = id;
+        updateUI();
+        saveGame();
+      }
+
+      function usePlot(index) {
+        const now = Date.now();
+        const plot = state.plots[index];
+
+        if (!plot) {
+          const crop = CROP_BY_ID[state.selected] || CROPS[0];
+
+          if (crop.level > state.level) {
+            toast(`Niveau ${crop.level} requis.`);
+            return;
+          }
+
+          if (state.coins < crop.cost) {
+            toast(`Il manque ${crop.cost - state.coins} 🪙.`);
+            return;
+          }
+
+          state.coins -= crop.cost;
+          state.plots[index] = {
+            crop: crop.id,
+            plantedAt: now,
+            readyAt: now + crop.time * 1000,
+            watered: false
+          };
+
+          progressQuests("plant", 1);
+          toast(`${crop.emoji} ${crop.name} plantée !`);
+        } else {
+          const crop = CROP_BY_ID[plot.crop];
+          if (!crop) {
+            state.plots[index] = null;
+          } else if (now >= plot.readyAt) {
+            state.plots[index] = null;
+            state.inventory[crop.id] = (state.inventory[crop.id] || 0) + 1;
+
+            const xp = cropXP(crop);
+            gainCoins(crop.sell);
+            gainXP(xp);
+            progressQuests("harvest", 1, crop.id);
+
+            toast(`${crop.emoji} +${crop.sell} 🪙 · +${xp} XP · +1 stock`);
+          } else if (!plot.watered) {
+            plot.watered = true;
+
+            // La durée totale de pousse devient 70 % de la durée initiale.
+            const shortenedReadyAt = plot.plantedAt + crop.time * 1000 * 0.7;
+            plot.readyAt = Math.min(plot.readyAt, shortenedReadyAt);
+
+            progressQuests("water", 1);
+            toast(now >= plot.readyAt ? "💧 La culture est prête !" : "💧 Arrosée : pousse réduite de 30 % !");
+          } else {
+            toast("Cette parcelle est déjà arrosée 💧");
+            return;
+          }
+        }
+
+        updateUI(now);
+        saveGame();
+      }
+
+      /* Commandes */
+      function availableProducts() {
+        const products = CROPS
+          .filter(crop => crop.level <= state.level)
+          .map(crop => crop.id);
+
+        ANIMALS.forEach(animal => {
+          if ((state.animals[animal.id]?.count || 0) > 0) products.push(animal.product);
+        });
+
+        return products;
+      }
+
+      function orderFromItems(clientName, items, id) {
+        const baseValue = items.reduce((total, item) => {
+          return total + ITEMS[item.id].value * item.qty;
+        }, 0);
+
+        return {
+          id: id || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
+          client: clientName,
+          items,
+          coins: Math.round(baseValue * 2.2),
+          xp: Math.max(5, Math.round(baseValue / 4))
+        };
+      }
+
+      function createOrder() {
+        const pool = [...availableProducts()];
+        const client = CLIENTS[Math.floor(Math.random() * CLIENTS.length)];
+        const itemCount = pool.length > 1 && Math.random() < 0.52 ? 2 : 1;
+        const items = [];
+
+        for (let i = 0; i < itemCount; i++) {
+          const index = Math.floor(Math.random() * pool.length);
+          const id = pool.splice(index, 1)[0];
+          items.push({ id, qty: 2 + Math.floor(Math.random() * 3) });
+        }
+
+        return orderFromItems(client.name, items);
+      }
+
+      function ensureOrders() {
+        const allowed = new Set(availableProducts());
+        const validOrders = [];
+
+        for (const order of state.orders) {
+          if (!order || !Array.isArray(order.items)) continue;
+          if (order.items.length < 1 || order.items.length > 2) continue;
+
+          const seen = new Set();
+          const items = [];
+          let valid = true;
+
+          for (const item of order.items) {
+            const qty = integer(item?.qty, 0);
+            if (!item || !allowed.has(item.id) || !ITEMS[item.id]) valid = false;
+            if (qty < 2 || qty > 4 || seen.has(item.id)) valid = false;
+            seen.add(item.id);
+            items.push({ id: item.id, qty });
+          }
+
+          const clientExists = CLIENTS.some(client => client.name === order.client);
+          if (!clientExists) valid = false;
+
+          if (valid) {
+            validOrders.push(orderFromItems(order.client, items, String(order.id || "")));
+          }
+        }
+
+        state.orders = validOrders;
+        while (state.orders.length < 3) state.orders.push(createOrder());
+      }
+
+      function canDeliver(order) {
+        return Boolean(order) && order.items.every(item => {
+          return (state.inventory[item.id] || 0) >= item.qty;
+        });
+      }
+
+      function deliverOrder(index) {
+        const order = state.orders[index];
+        if (!order) return;
+
+        if (!canDeliver(order)) {
+          toast("Stock insuffisant pour cette commande.");
+          return;
+        }
+
+        order.items.forEach(item => {
+          state.inventory[item.id] -= item.qty;
+          if (state.inventory[item.id] <= 0) delete state.inventory[item.id];
+        });
+
+        gainCoins(order.coins);
+        gainXP(order.xp);
+        state.orders[index] = createOrder();
+
+        toast(`🚚 Livraison : +${order.coins} 🪙 · +${order.xp} XP`);
+        updateUI();
+        saveGame();
+      }
+
+      function changeOrder(index) {
+        state.orders[index] = createOrder();
+        toast("Commande remplacée.");
+        updateUI();
+        saveGame();
+      }
+
+      /* Création unique de l’interface et des boutons */
+      function buildUI() {
+        CROPS.forEach(crop => {
+          const button = makeElement("button", "seed");
+          button.type = "button";
+
+          const emoji = makeElement("span", "seed-emoji", crop.emoji);
+          const name = makeElement("span", "seed-name", crop.name);
+          const status = makeElement("span", "seed-status");
+
+          button.append(emoji, name, status);
+          button.addEventListener("click", () => selectSeed(crop.id));
+          $("seedBar").appendChild(button);
+          ui.seeds[crop.id] = { button, status };
+        });
+
+        for (let i = 0; i < PLOT_COUNT; i++) {
+          const button = makeElement("button", "plot empty");
+          button.type = "button";
+
+          const emoji = makeElement("span", "plot-emoji", "＋");
+          const label = makeElement("span", "plot-label", "Libre");
+          const sub = makeElement("span", "plot-sub");
+          const meter = makeMeter();
+          meter.track.setAttribute("aria-hidden", "true");
+
+          button.append(emoji, label, sub, meter.track);
+          button.addEventListener("click", () => usePlot(i));
+          $("plotGrid").appendChild(button);
+
+          ui.plots.push({ button, emoji, label, sub, meter });
+        }
+
+        ANIMALS.forEach(animal => {
+          const card = makeElement("article", "animal-card");
+          const head = makeElement("div", "animal-head");
+          const icon = makeElement("span", "animal-icon", animal.emoji);
+          const nameBox = makeElement("div", "animal-name");
+          const title = makeElement("h3", "", animal.plural);
+          const rate = makeElement("p");
+          const count = makeElement("span", "count-pill");
+
+          nameBox.append(title, rate);
+          head.append(icon, nameBox, count);
+
+          const product = makeElement("div", "animal-product");
+          const meter = makeMeter();
+          meter.track.setAttribute("role", "progressbar");
+          meter.track.setAttribute("aria-label", `Production de ${animal.productName}`);
+          meter.track.setAttribute("aria-valuemin", "0");
+          meter.track.setAttribute("aria-valuemax", "100");
+
+          const meta = makeElement("div", "animal-meta");
+          const stored = makeElement("span");
+          const timer = makeElement("span");
+          meta.append(stored, timer);
+
+          const actions = makeElement("div", "actions");
+          const collect = makeElement("button", "btn secondary", "Ramasser");
+          const buy = makeElement("button", "btn primary");
+          collect.type = "button";
+          buy.type = "button";
+          collect.addEventListener("click", () => collectAnimal(animal.id));
+          buy.addEventListener("click", () => buyAnimal(animal.id));
+          actions.append(collect, buy);
+
+          card.append(head, product, meter.track, meta, actions);
+          $("animalList").appendChild(card);
+
+          ui.animals[animal.id] = {
+            card, rate, count, product, meter, stored, timer, collect, buy
+          };
+        });
+
+        for (let i = 0; i < 3; i++) {
+          const card = makeElement("article", "quest-card");
+          const title = makeElement("div", "quest-title");
+          const reward = makeElement("div", "quest-reward");
+          const meter = makeMeter();
+
+          meter.track.setAttribute("role", "progressbar");
+          meter.track.setAttribute("aria-label", `Progression de la quête ${i + 1}`);
+          meter.track.setAttribute("aria-valuemin", "0");
+          meter.track.setAttribute("aria-valuemax", "100");
+
+          const progressRow = makeElement("div", "quest-progress-row");
+          const progress = makeElement("span");
+          const status = makeElement("span", "", "En cours");
+          progressRow.append(progress, status);
+
+          const button = makeElement("button", "btn primary", "Récupérer");
+          button.type = "button";
+          button.addEventListener("click", () => claimQuest(i));
+
+          card.append(title, reward, meter.track, progressRow, button);
+          $("questList").appendChild(card);
+          ui.quests.push({ card, title, reward, meter, progress, status, button });
+        }
+
+        Object.entries(ITEMS).forEach(([id, item]) => {
+          const chip = makeElement("span", "stock-chip");
+          const label = makeElement("span", "", `${item.emoji} ${item.name}`);
+          const quantity = makeElement("strong");
+          chip.append(label, quantity);
+          chip.hidden = true;
+          $("stockList").appendChild(chip);
+          ui.stock[id] = { chip, quantity };
+        });
+
+        for (let i = 0; i < 3; i++) {
+          const card = makeElement("article", "order-card");
+          const head = makeElement("div", "order-head");
+          const client = makeElement("h3");
+          const pay = makeElement("span", "order-pay");
+          head.append(client, pay);
+
+          const itemsBox = makeElement("div", "order-items");
+          const itemRows = [];
+
+          for (let j = 0; j < 2; j++) {
+            const row = makeElement("div", "order-item");
+            const label = makeElement("span");
+            const stock = makeElement("span", "order-stock");
+            row.append(label, stock);
+            itemsBox.appendChild(row);
+            itemRows.push({ row, label, stock });
+          }
+
+          const actions = makeElement("div", "actions");
+          const change = makeElement("button", "btn secondary", "Changer");
+          const deliver = makeElement("button", "btn primary", "Livrer");
+          change.type = "button";
+          deliver.type = "button";
+          change.addEventListener("click", () => changeOrder(i));
+          deliver.addEventListener("click", () => deliverOrder(i));
+          actions.append(change, deliver);
+
+          card.append(head, itemsBox, actions);
+          $("orderList").appendChild(card);
+          ui.orders.push({ card, client, pay, itemRows, deliver });
+        }
+      }
+
+      function updateScene(now) {
+        const hour = new Date(now).getHours();
+        const night = hour >= 19 || hour < 7;
+        const mode = night ? "night" : "day";
+        if (mode === lastSceneMode) return;
+
+        lastSceneMode = mode;
+        $("scene").classList.toggle("night", night);
+        $("scene").setAttribute("aria-label", night ? "La ferme sous la lune" : "La ferme sous le soleil");
+        $("celestial").textContent = night ? "🌙" : "☀️";
+      }
+
+      /* Mise à jour en place : aucun bouton n’est recréé ici. */
+      function updateUI(now = Date.now()) {
+        const xpNeeded = state.level * 50;
+        const selected = CROP_BY_ID[state.selected] || CROPS[0];
+
+        ui.coins.textContent = formatNumber(state.coins);
+        ui.levelText.textContent = `Niveau ${state.level}`;
+        ui.xpText.textContent = `${state.xp} / ${xpNeeded} XP`;
+        ui.xpFill.style.width = `${clamp(state.xp / xpNeeded * 100, 0, 100)}%`;
+        ui.xpTrack.setAttribute("aria-valuemax", String(xpNeeded));
+        ui.xpTrack.setAttribute("aria-valuenow", String(state.xp));
+        ui.streakText.textContent = `${state.streak} jour${state.streak > 1 ? "s" : ""}`;
+        ui.selectedSeed.textContent = `${selected.emoji} ${selected.name}`;
+        ui.dailyInfo.textContent = `Série plafonnée au jour 7 pour le bonus · nouvelles quêtes à minuit.`;
+
+        CROPS.forEach(crop => {
+          const refs = ui.seeds[crop.id];
+          const locked = crop.level > state.level;
+          refs.button.disabled = locked;
+          refs.button.classList.toggle("selected", state.selected === crop.id);
+          refs.button.setAttribute("aria-pressed", state.selected === crop.id ? "true" : "false");
+          refs.button.setAttribute(
+            "aria-label",
+            locked
+              ? `${crop.name}, verrouillée jusqu’au niveau ${crop.level}`
+              : `${crop.name}, ${crop.cost} pièces, ${crop.time} secondes`
+          );
+          refs.status.textContent = locked
+            ? `🔒 Niveau ${crop.level}`
+            : `${crop.cost} 🪙 · ${crop.time} s`;
+        });
+
+        state.plots.forEach((plot, index) => {
+          const refs = ui.plots[index];
+
+          if (!plot) {
+            refs.button.className = "plot empty";
+            refs.emoji.textContent = "＋";
+            refs.label.textContent = "Libre";
+            refs.sub.textContent = `${selected.emoji} ${selected.cost} 🪙`;
+            refs.meter.track.style.visibility = "hidden";
+            setMeter(refs.meter, 0, 1);
+            refs.button.setAttribute("aria-label", `Parcelle ${index + 1} vide, planter ${selected.name}`);
+            return;
+          }
+
+          const crop = CROP_BY_ID[plot.crop];
+          if (!crop) return;
+
+          const ready = now >= plot.readyAt;
+          refs.meter.track.style.visibility = "visible";
+
+          if (ready) {
+            refs.button.className = "plot ready";
+            refs.emoji.textContent = crop.emoji;
+            refs.label.textContent = "Prête !";
+            refs.sub.textContent = `Récolter · +${crop.sell} 🪙`;
+            setMeter(refs.meter, 1, 1);
+            refs.button.setAttribute("aria-label", `Récolter ${crop.name}, parcelle ${index + 1}`);
+          } else {
+            const remaining = Math.max(1, Math.ceil((plot.readyAt - now) / 1000));
+            const total = Math.max(1, plot.readyAt - plot.plantedAt);
+            const progress = clamp((now - plot.plantedAt) / total, 0, 1);
+
+            refs.button.className = `plot growing${plot.watered ? " watered" : ""}`;
+            refs.emoji.textContent = crop.emoji;
+            refs.label.textContent = crop.name;
+            refs.sub.textContent = plot.watered
+              ? `${remaining} s · 💧`
+              : `${remaining} s · à arroser`;
+            setMeter(refs.meter, progress, 1);
+            refs.button.setAttribute(
+              "aria-label",
+              `${crop.name}, prête dans ${remaining} secondes${plot.watered ? ", déjà arrosée" : ", toucher pour arroser"}`
+            );
+          }
+        });
+
+        ANIMALS.forEach(animal => {
+          const animalState = state.animals[animal.id];
+          const refs = ui.animals[animal.id];
+          const count = animalState.count;
+          const capacity = count * 3;
+          const locked = state.level < animal.level;
+          const duration = animal.time * 1000;
+
+          refs.card.classList.toggle("locked", locked);
+          refs.count.textContent = `${count} / 3`;
+          refs.product.textContent = `${animal.productEmoji} ${animal.productName} · ${animal.value} 🪙 / unité`;
+
+          if (locked) {
+            refs.rate.textContent = `Se débloque au niveau ${animal.level}`;
+          } else if (count === 0) {
+            refs.rate.textContent = "Achetez votre premier animal";
+          } else {
+            refs.rate.textContent = `Vitesse ×${count} · réserve de ${capacity}`;
+          }
+
+          refs.stored.textContent = `🧺 ${animalState.stored} / ${capacity}`;
+
+          if (count === 0) {
+            refs.timer.textContent = locked ? `Niveau ${animal.level}` : "En attente";
+            setMeter(refs.meter, 0, 1);
+          } else if (animalState.stored >= capacity) {
+            refs.timer.textContent = "Réserve pleine";
+            setMeter(refs.meter, 0, 1);
+          } else {
+            const remaining = Math.max(
+              1,
+              Math.ceil((duration - animalState.progress) / (count * 1000))
+            );
+            refs.timer.textContent = animalState.stored > 0
+              ? `Prêt ! · suivant ${remaining} s`
+              : `Prêt dans ${remaining} s`;
+            setMeter(refs.meter, animalState.progress, duration);
+          }
+
+          refs.collect.disabled = count === 0 || animalState.stored <= 0;
+          refs.buy.disabled = locked || count >= 3;
+          refs.buy.textContent = count >= 3 ? "Maximum (3)" : `+1 (${animal.buy} 🪙)`;
+        });
+
+        let totalStock = 0;
+        Object.entries(ui.stock).forEach(([id, refs]) => {
+          const quantity = state.inventory[id] || 0;
+          totalStock += quantity;
+          refs.chip.hidden = quantity <= 0;
+          refs.quantity.textContent = `× ${quantity}`;
+        });
+        ui.stockEmpty.hidden = totalStock > 0;
+
+        state.quests.forEach((quest, index) => {
+          const refs = ui.quests[index];
+          if (!refs || !quest) return;
+
+          const complete = quest.progress >= quest.target;
+          refs.card.classList.toggle("complete", complete);
+          refs.title.textContent = questText(quest);
+          refs.reward.textContent = `🎁 ${quest.reward} 🪙 + 15 XP`;
+          refs.progress.textContent = `${Math.min(quest.progress, quest.target)} / ${quest.target}`;
+          refs.status.textContent = complete ? "Terminée !" : "En cours";
+          refs.button.disabled = !complete;
+          setMeter(refs.meter, quest.progress, quest.target);
+        });
+
+        state.orders.forEach((order, index) => {
+          const refs = ui.orders[index];
+          if (!refs || !order) return;
+
+          const client = CLIENTS.find(entry => entry.name === order.client) || CLIENTS[0];
+          refs.client.textContent = `${client.emoji} ${client.name}`;
+          refs.pay.textContent = `${order.coins} 🪙\n+${order.xp} XP`;
+          refs.pay.style.whiteSpace = "pre-line";
+
+          refs.itemRows.forEach((rowRefs, itemIndex) => {
+            const item = order.items[itemIndex];
+            rowRefs.row.hidden = !item;
+            if (!item) return;
+
+            const definition = ITEMS[item.id];
+            const owned = state.inventory[item.id] || 0;
+            rowRefs.label.textContent = `${definition.emoji} ${definition.name} × ${item.qty}`;
+            rowRefs.stock.textContent = `${owned} / ${item.qty}`;
+            rowRefs.row.classList.toggle("missing", owned < item.qty);
+          });
+
+          const deliverable = canDeliver(order);
+          refs.card.classList.toggle("ready", deliverable);
+          refs.deliver.disabled = !deliverable;
+        });
+
+        updateScene(now);
+      }
+
+      function applyTheme() {
+        const dark = state.theme === "dark";
+        document.documentElement.dataset.theme = dark ? "dark" : "light";
+
+        const button = $("themeBtn");
+        button.textContent = dark ? "☀️" : "🌙";
+        button.setAttribute("aria-label", dark ? "Passer en mode clair" : "Passer en mode sombre");
+        document.querySelector('meta[name="theme-color"]').content = dark ? "#121a17" : "#fff4d8";
+      }
+
+      function tick() {
+        const now = Date.now();
+        const dailyChanged = checkDaily();
+        updateAnimals(now);
+        updateUI(now);
+
+        if (dailyChanged || now - lastSave >= 10000) {
+          saveGame();
+          lastSave = now;
+        }
+      }
+
+      function init() {
+        state = loadState();
+
+        if (!CROP_BY_ID[state.selected] || CROP_BY_ID[state.selected].level > state.level) {
+          state.selected = "carotte";
+        }
+
+        applyTheme();
+
+        const now = Date.now();
+        updateAnimals(now);
+        checkDaily();
+        ensureOrders();
+        buildUI();
+        updateUI(now);
+        saveGame();
+        lastSave = now;
+
+        if (storageReadProblem) {
+          toast("Ancienne sauvegarde ignorée ou indisponible.");
+        }
+
+        $("themeBtn").addEventListener("click", () => {
+          state.theme = state.theme === "dark" ? "light" : "dark";
+          applyTheme();
+          saveGame();
+        });
+
+        setInterval(tick, 1000);
+
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) {
+            updateAnimals(Date.now());
+            saveGame();
+          } else {
+            tick();
+          }
+        });
+
+        window.addEventListener("pagehide", () => {
+          updateAnimals(Date.now());
+          saveGame();
+        });
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
